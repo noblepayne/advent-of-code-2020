@@ -1,5 +1,6 @@
 {:paths ["resources" "src"]
- :deps {org.clojure/clojure {:mvn/version "RELEASE"}}
+ :deps {org.clojure/clojure {:mvn/version "RELEASE"}
+        org.clojure/math.combinatorics {:mvn/version "0.1.6"}}
  :aliases
  {:test {:extra-paths ["test"]
          :extra-deps {org.clojure/test.check {:mvn/version "RELEASE"}}}
@@ -16,6 +17,7 @@
   :rebel {:extra-deps {com.bhauman/rebel-readline {:mvn/version "RELEASE"}
                        nrepl {:mvn/version "0.8.3"}
                        org.clojure/test.check {:mvn/version "1.1.0"}
-                       cider/cider-nrepl {:mvn/version "0.25.5"}}
+                       cider/cider-nrepl {:mvn/version "0.25.5"}
+                       lambdaisland/kaocha {:mvn/version "1.0.732"}}
           :extra-paths ["user" "test"]
           :main-opts  ["-m" "repl" "noblepayne.advent2020.day1"]}}}
