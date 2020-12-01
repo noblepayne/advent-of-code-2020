@@ -1,0 +1,21 @@
+{:paths ["resources" "src"]
+ :deps {org.clojure/clojure {:mvn/version "RELEASE"}}
+ :aliases
+ {:test {:extra-paths ["test"]
+         :extra-deps {org.clojure/test.check {:mvn/version "RELEASE"}}}
+  :runner
+    {:extra-deps {com.cognitect/test-runner
+                  {:git/url "https://github.com/cognitect-labs/test-runner"
+                   :sha "76568540e7f40268ad2b646110f237a60295fa3c"}
+                  lambdaisland/kaocha {:mvn/version "1.0.732"}}
+     :extra-paths ["test"]
+     :main-opts ["-m" "kaocha.runner"]}
+;;     :main-opts ["-m" "cognitect.test-runner"
+;;                 "-d" "test"}
+   
+  :rebel {:extra-deps {com.bhauman/rebel-readline {:mvn/version "RELEASE"}
+                       nrepl {:mvn/version "0.8.3"}
+                       org.clojure/test.check {:mvn/version "1.1.0"}
+                       cider/cider-nrepl {:mvn/version "0.25.5"}}
+          :extra-paths ["user" "test"]
+          :main-opts  ["-m" "repl" "noblepayne.advent2020.day1"]}}}
