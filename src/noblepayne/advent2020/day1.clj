@@ -19,8 +19,8 @@
        (map #(apply * %))
        first))
 
-(def solve1 (partial solve-base 2020 2))
-(def solve2 (partial solve-base 2020 3))
+(def solve-1 (partial solve-base 2020 2))
+(def solve-2 (partial solve-base 2020 3))
 
   
 (comment
