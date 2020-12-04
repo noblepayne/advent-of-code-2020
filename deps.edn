@@ -20,4 +20,4 @@
                        cider/cider-nrepl {:mvn/version "0.25.5"}
                        lambdaisland/kaocha {:mvn/version "1.0.732"}}
           :extra-paths ["user" "test"]
-          :main-opts  ["-m" "repl" "noblepayne.advent2020.day3"]}}}
+          :main-opts  ["-m" "repl" "noblepayne.advent2020.day4"]}}}
