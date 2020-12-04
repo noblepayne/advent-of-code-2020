@@ -33,7 +33,6 @@
 (def solve-1 (partial solve-base valid-1?))
 
 ;;;;;;;; PART 2 ;;;;;;;;;;;;;;;;;;;;
-
 (defn number-between? [lower upper s]
   (<= lower (Integer/parseInt s) upper))
 
@@ -57,9 +56,9 @@
   (let [validator (get validators k (constantly true))]
     (validator v)))
 
-(defn valid-2? [pp]
-  (and (valid-1? pp)
-       (every? valid-passport-entry? pp)))
+(defn valid-2? [passport]
+  (and (valid-1? passport)
+       (every? valid-passport-entry? passport)))
 
 (def solve-2 (partial solve-base valid-2?))
 
