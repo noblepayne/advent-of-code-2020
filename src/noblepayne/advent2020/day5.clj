@@ -3,42 +3,27 @@
            [clojure.string :as str]))
 
 ;;;;;;;; DATA ;;;;;;;;;;;;;;;;;;;;;;;
-(defn process-pass [pass]
-  {:rowpass (take 7 pass)
-   :colpass (drop 7 pass)})
+(defn raw-data [filename]
+  (slurp (io/resource filename)))
 
 (defn load-data [filename]
-  (->> filename
-       io/resource
-       slurp
-       str/split-lines
-       (map process-pass)))
+  (str/split-lines (raw-data filename)))
 
 ;;;;;;;; PART 1 ;;;;;;;;;;;;;;;;;;;;
-(defn pass-to-int [pass]
-  (Integer/parseInt
-   (->> pass
-        (map {\F 0 \B 1 \L 0 \R 1})
-        (apply str))
-   2))
-
-(defn seat-id [{:keys [:rowpass :colpass]}]
-  (let [row (pass-to-int rowpass)
-        col (pass-to-int colpass)]
-    (+ col (* 8 row))))
+(defn seat-id [pass]
+  (let [binary-pass (apply str (map {\F 0 \B 1 \L 0 \R 1} pass))]
+    (Integer/parseInt binary-pass 2)))
 
 (defn solve-1 [data]
-  (->> data
-       (map seat-id)
-       (apply max)))
+  (apply max (map seat-id data)))
 
 ;;;;;;;; PART 2 ;;;;;;;;;;;;;;;;;;;;
 (defn solve-2 [data]
   (let [ids (map seat-id data)
-        max_ (apply max ids)
-        min_ (apply min ids)
-        seat-range (range min_ (inc max_))]
-    (- (apply + seat-range)
+        max-id (apply max ids)
+        min-id (apply min ids)
+        all-ids (range min-id (inc max-id))]
+    (- (apply + all-ids)
        (apply + ids))))
     
 ;;;;;;;; REPL ;;;;;;;;;;;;;;;;;;;;;;
