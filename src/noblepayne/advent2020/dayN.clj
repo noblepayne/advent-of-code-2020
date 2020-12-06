@@ -1,16 +1,12 @@
 (ns noblepayne.advent2020.dayN
- (:require [clojure.java.io :as io]
-           [clojure.string :as str]))
+ (:require [clojure.string :as str]
+           [noblepayne.advent2020.utils :as utils]))
 
 ;;;;;;;; DATA ;;;;;;;;;;;;;;;;;;;;;;;
-(defn raw-data [filename]
-  (slurp (io/resource filename)))
-
 (defn load-data [filename]
-  (str/split-lines (raw-data filename)))
+  (str/split-lines (utils/raw-data filename)))
 
 ;;;;;;;; PART 1 ;;;;;;;;;;;;;;;;;;;;
-
 (defn solve-1 [data])
 
 ;;;;;;;; PART 2 ;;;;;;;;;;;;;;;;;;;;
