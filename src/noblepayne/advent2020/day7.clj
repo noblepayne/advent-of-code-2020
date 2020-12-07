@@ -3,22 +3,21 @@
            [noblepayne.advent2020.utils :as utils]))
 
 ;;;;;;;; DATA ;;;;;;;;;;;;;;;;;;;;;;;
-(def input-bag-regex #"(.+) bags contain (.+|no other bags.)")
-(def output-bag-regex #"(\d+) (.+) bags?.?")
+(def input-bag-regex #"(.+) bags contain (.+|no other bags\.)")
+(def output-bag-regex #"(\d+) (.+) bags?\.?")
 
-(defn process-output-inner [output-entry]
-  (let [[_ n bag] (re-matches output-bag-regex output-entry)]
-    {:count (Integer/parseInt n) :bag bag}))
+(defn process-output-bag [output-bag]
+  (let [[_ cnt bag] (re-matches output-bag-regex output-bag)]
+    {:count (Integer/parseInt cnt) :bag bag}))
 
-(defn process-output [output]
-  (map process-output-inner (str/split output #", ")))
+(defn process-output-bags [output-bags]
+  (->> (str/split output-bags #", ")
+       (remove #{"no other bags."})
+       (map process-output-bag)))
 
 (defn process-line [line]
-  (let [[_ input-color output] (re-matches input-bag-regex line)
-        output-colors (if (= "no other bags." output)
-                        '()
-                        (process-output output))]
-    [input-color output-colors]))
+  (let [[_ input-bag output-bags] (re-matches input-bag-regex line)]
+    [input-bag (process-output-bags output-bags)]))
 
 (defn load-data [filename]
   (->> filename
@@ -27,21 +26,33 @@
        (map process-line)
        (into {})))
 
-;;;;;;;; PART 1 ;;;;;;;;;;;;;;;;;;;;
-(defn contained-bags
-  ([data bag] (contained-bags data [bag] #{}))
-  ([data bags output]
-   (if-let [current-bag (peek bags)]
-      (let [remaining-bags (pop bags)
-            inner-bags (map :bag (get data current-bag))
-            new-output (into output inner-bags)
-            new-bags (into remaining-bags inner-bags)]
-        (recur data new-bags new-output))
-      output)))
+;;;;;;;; COMMON ;;;;;;;;;;;;;;;;;;;;
+(defn gather
+  "Depth-first traversal with customizable output gathering.
+
+   `inner-bag-fn`: receives the list of inner bag maps for a
+   bag, and should return a list of bag names.
+   `output-bag-fn`: receives the current accumlated output and
+   the output of `inner-bag-fn`, and should produce the new
+   output.
+   `output`: the initial output collection/value.
+   `data`: map containing information keyed on bag name.
+   `bags`: list of starting bags." 
+  [inner-bag-fn output-fn output data bags]
+  (if-let [current-bag (peek bags)]
+    (let [remaining-bags (pop bags)
+          inner-bags (inner-bag-fn (get data current-bag))
+          new-output (output-fn output inner-bags)
+          new-bags (into remaining-bags inner-bags)]
+      (recur inner-bag-fn output-fn new-output data new-bags))
+    output))
+
+;;;;;;;; PART 1;;;;;;;;;;;;;;;;;;;;
+(defn contained-bags [data bag]
+  (gather #(map :bag %) into #{} data [bag]))
 
 (defn count-can-contain [data bag]
-  (->> data
-       keys
+  (->> (keys data)
        (map #(contained-bags data %))
        (filter #(contains? % bag))
        count))
@@ -53,16 +64,8 @@
 (defn expand-bag [{:keys [:count :bag]}]
   (take count (repeat bag)))
 
-(defn count-sub-bags
-  ([data bag] (count-sub-bags data [bag] -1))
-  ([data bags cnt]
-   (if-let [current-bag (peek bags)]
-     (let [remaining-bags (pop bags)
-           inner-bags (get data current-bag)
-           new-cnt (inc cnt)
-           new-bags (into remaining-bags (mapcat expand-bag inner-bags))]
-       (recur data new-bags new-cnt))
-     cnt)))
+(defn count-sub-bags [data bag]
+  (gather #(mapcat expand-bag %) (fn [n _] (inc n)) -1 data [bag]))
   
 (defn solve-2 [data]
   (count-sub-bags data "shiny gold"))
