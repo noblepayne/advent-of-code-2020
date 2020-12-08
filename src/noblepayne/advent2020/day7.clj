@@ -26,30 +26,14 @@
        (map process-line)
        (into {})))
 
-;;;;;;;; COMMON ;;;;;;;;;;;;;;;;;;;;
-(defn gather
-  "Depth-first traversal with customizable output gathering.
-
-   `inner-bag-fn`: receives the list of inner bag maps for a
-   bag, and should return a list of bag names.
-   `output-bag-fn`: receives the current accumlated output and
-   the output of `inner-bag-fn`, and should produce the new
-   output.
-   `output`: the initial output collection/value.
-   `data`: map containing information keyed on bag name.
-   `bags`: list of starting bags." 
-  [inner-bag-fn output-fn output data bags]
-  (if-let [current-bag (peek bags)]
-    (let [remaining-bags (pop bags)
-          inner-bags (inner-bag-fn (get data current-bag))
-          new-output (output-fn output inner-bags)
-          new-bags (into remaining-bags inner-bags)]
-      (recur inner-bag-fn output-fn new-output data new-bags))
-    output))
-
 ;;;;;;;; PART 1;;;;;;;;;;;;;;;;;;;;
 (defn contained-bags [data bag]
-  (gather #(map :bag %) into #{} data [bag]))
+  (utils/gather
+    #(map :bag %)
+    into
+    #{}
+    data
+    [bag]))
 
 (defn count-can-contain [data bag]
   (->> (keys data)
@@ -65,7 +49,12 @@
   (take count (repeat bag)))
 
 (defn count-sub-bags [data bag]
-  (gather #(mapcat expand-bag %) (fn [n _] (inc n)) -1 data [bag]))
+  (utils/gather
+    #(mapcat expand-bag %)
+    (fn [n _] (inc n))
+    -1
+    data
+    [bag]))
   
 (defn solve-2 [data]
   (count-sub-bags data "shiny gold"))
