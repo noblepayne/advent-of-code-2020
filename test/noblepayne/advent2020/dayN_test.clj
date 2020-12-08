@@ -1,6 +1,5 @@
 (ns noblepayne.advent2020.dayN-test
   (:require [clojure.test :refer :all]
-            [clojure.java.io :as io]
             [noblepayne.advent2020.dayN :refer :all]))
 
 (def testdata (load-data "dayNp1t1.txt")) 
